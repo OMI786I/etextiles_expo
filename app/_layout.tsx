@@ -1,13 +1,18 @@
-import { Stack } from "expo-router";
+import { Drawer } from "expo-router/drawer";
 import "../global.css";
+import DrawerContent from "@/components/DrawerContent";
+
 export default function RootLayout() {
   return (
-    <Stack
+    <Drawer
+      drawerContent={(props) => <DrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
+        drawerPosition: "right",
       }}
     >
-      <Stack.Screen name="index" />
-    </Stack>
+      <Drawer.Screen name="index" />
+      <Drawer.Screen name="settings" />
+    </Drawer>
   );
 }
