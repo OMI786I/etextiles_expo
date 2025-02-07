@@ -1,15 +1,14 @@
-import { Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 import "../global.css";
+import Navbar from "@/components/Navbar";
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeAreaView className="p-3">
+      <Navbar />
+
+      <Text className="text-red-500">
+        Edit app/index.tsx to edit this screen.
+      </Text>
+    </SafeAreaView>
   );
 }
