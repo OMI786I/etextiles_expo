@@ -33,11 +33,15 @@ export default function Index() {
     image: string;
   }
 
+  const dispatch = useDispatch();
+  const selectedType = useSelector((state: string) => state.types);
+  console.log("user ig", selectedType);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // Start loading
       try {
-        const result = await fetchDocuments();
+        const result = await fetchDocuments(selectedType);
         setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -47,11 +51,7 @@ export default function Index() {
     };
 
     fetchData();
-  }, []);
-
-  const dispatch = useDispatch();
-  const selectedType = useSelector((state: string) => state.types);
-  console.log("user ig", selectedType);
+  }, [selectedType]);
 
   const handleTypeChange = (type) => {
     dispatch(updateTypes(type));

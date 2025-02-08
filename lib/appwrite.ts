@@ -16,13 +16,25 @@ client
 
 const database = new Databases(client);
 
-export async function fetchDocuments() {
+export async function fetchDocuments(selectedType: string) {
   try {
-    const result = await database.listDocuments(
-      config.databaseID, // databaseId
-      config.collectionID // collectionId
-      //  [Query.equal("type", ["female"])]
-    );
+    let result;
+
+    // If selectedType is "All", don't apply any filter
+    if (selectedType === "All") {
+      result = await database.listDocuments(
+        config.databaseID,
+        config.collectionID
+      );
+    } else {
+      // Apply filter if selectedType is not "All"
+      result = await database.listDocuments(
+        config.databaseID, // databaseId
+        config.collectionID, // collectionId
+        [Query.equal("type", [selectedType])]
+      );
+    }
+
     return result.documents;
   } catch (error) {
     console.error(error);
