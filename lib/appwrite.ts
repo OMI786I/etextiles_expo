@@ -1,4 +1,4 @@
-import { Client, Account, ID, Databases } from "react-native-appwrite";
+import { Client, Account, ID, Databases, Query } from "react-native-appwrite";
 
 const config = {
   endPoint: "https://cloud.appwrite.io/v1",
@@ -15,12 +15,13 @@ client
   .setPlatform(config.Platform!);
 
 const database = new Databases(client);
-console.log(config.endPoint, config.projectId, config.Platform);
+
 export async function fetchDocuments() {
   try {
     const result = await database.listDocuments(
       config.databaseID, // databaseId
       config.collectionID // collectionId
+      //  [Query.equal("type", ["female"])]
     );
     return result.documents;
   } catch (error) {
