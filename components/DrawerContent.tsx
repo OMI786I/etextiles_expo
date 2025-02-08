@@ -103,6 +103,11 @@ const DrawerContent = ({ navigation }: any) => {
             );
           }}
         />
+
+        <TouchableOpacity className="flex-row gap-2">
+          <AntDesign name="arrowright" size={24} color="white" />,
+          <Text className="text-white">Logout</Text>
+        </TouchableOpacity>
       </LinearGradient>
     </ScrollView>
   );
