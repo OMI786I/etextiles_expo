@@ -11,10 +11,12 @@ import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { fetchDocuments } from "@/lib/appwrite";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTypes } from "@/stateSlice/typeSlice";
 
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const types = ["All", "Women's", "Men's", "Sale"];
+  const types = ["All", "female", "male", "discount", "popular"];
   const [check, setCheck] = useState("");
   const [check2, setCheck2] = useState("");
   const [data, setData] = useState<DataItem[]>([]);
@@ -47,6 +49,14 @@ export default function Index() {
     fetchData();
   }, []);
 
+  const dispatch = useDispatch();
+  const selectedType = useSelector((state: string) => state.types);
+  console.log("user ig", selectedType);
+
+  const handleTypeChange = (type) => {
+    dispatch(updateTypes(type));
+  };
+
   return (
     <SafeAreaView className="p-3">
       <Navbar />
@@ -70,7 +80,7 @@ export default function Index() {
                   ? `px-5 py-2 rounded-full border-purple-600 border-2`
                   : `px-5 py-2 rounded-full bg-purple-600`
               }
-              onPress={() => setActiveFilter(item)}
+              onPress={() => (setActiveFilter(item), handleTypeChange(item))}
             >
               <Text
                 className={item !== activeFilter ? `text-black` : `text-white`}
