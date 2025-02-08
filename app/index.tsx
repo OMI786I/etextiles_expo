@@ -5,22 +5,23 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import Navbar from "@/components/Navbar";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { fetchDocuments } from "@/lib/appwrite";
 
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("All");
   const types = ["All", "Women's", "Men's", "Sale"];
   const [check, setCheck] = useState("");
   const [check2, setCheck2] = useState("");
+  const [data, setData] = useState<DataItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
 
-  console.log(check);
-  console.log(check2);
   interface DataItem {
-    id: number;
+    $id: string;
     title: string;
     price: number;
     description: string;
@@ -30,60 +31,27 @@ export default function Index() {
     image: string;
   }
 
-  const data: DataItem[] = [
-    {
-      id: 1,
-      title: "Pink Hoodie",
-      price: 20,
-      description:
-        "Pink hoodie. Guess what colors in pink. Giving you better comfort and warmth in cold winter",
-      rating: 3,
-      size: ["S", "M", "L", "XL", "XXL"],
-      seller: "Omi",
-      image: "https://i.ibb.co.com/PZy97hFD/pink-hoodie.jpg",
-    },
-    {
-      id: 2,
-      title: "Pink Hoodie",
-      price: 20,
-      description:
-        "Pink hoodie. Guess what colors in pink. Giving you better comfort and warmth in cold winter",
-      rating: 3,
-      size: ["S", "M", "L", "XL", "XXL"],
-      seller: "Omi",
-      image: "https://i.ibb.co.com/PZy97hFD/pink-hoodie.jpg",
-    },
-    {
-      id: 3,
-      title: "Pink Hoodie",
-      price: 20,
-      description:
-        "Pink hoodie. Guess what colors in pink. Giving you better comfort and warmth in cold winter",
-      rating: 3,
-      size: ["S", "M", "L", "XL", "XXL"],
-      seller: "Omi",
-      image: "https://i.ibb.co.com/PZy97hFD/pink-hoodie.jpg",
-    },
-    {
-      id: 4,
-      title: "Pink Hoodie",
-      price: 20,
-      description:
-        "Pink hoodie. Guess what colors in pink. Giving you better comfort and warmth in cold winter",
-      rating: 3,
-      size: ["S", "M", "L", "XL", "XXL"],
-      seller: "Omi",
-      image: "https://i.ibb.co.com/PZy97hFD/pink-hoodie.jpg",
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true); // Start loading
+      try {
+        const result = await fetchDocuments();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
 
-  console.log(activeFilter);
+    fetchData();
+  }, []);
+
   return (
     <SafeAreaView className="p-3">
       <Navbar />
 
-      {/** filter */}
-
+      {/** Filter section */}
       <FlatList
         className="mt-10"
         contentContainerStyle={{
@@ -93,53 +61,57 @@ export default function Index() {
         }}
         data={types}
         horizontal
-        renderItem={({ item }) => {
-          return (
-            <View style={{ marginHorizontal: 8 }}>
-              <TouchableOpacity
-                activeOpacity={0.4}
-                className={
-                  item !== activeFilter
-                    ? `px-5 py-2 rounded-full border-purple-600 border-2`
-                    : `px-5 py-2 rounded-full bg-purple-600 `
-                }
-                onPress={() => setActiveFilter(item)}
+        renderItem={({ item }) => (
+          <View style={{ marginHorizontal: 8 }}>
+            <TouchableOpacity
+              activeOpacity={0.4}
+              className={
+                item !== activeFilter
+                  ? `px-5 py-2 rounded-full border-purple-600 border-2`
+                  : `px-5 py-2 rounded-full bg-purple-600`
+              }
+              onPress={() => setActiveFilter(item)}
+            >
+              <Text
+                className={item !== activeFilter ? `text-black` : `text-white`}
               >
-                <Text
-                  className={
-                    item !== activeFilter ? `text-black` : `text-white`
-                  }
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        }}
-        keyExtractor={(item, index) => index.toString()}
+                {item}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        keyExtractor={(item) => item}
         showsHorizontalScrollIndicator={false}
       />
 
-      {/**cards */}
-
-      <FlatList
-        data={data}
-        numColumns={2}
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 50,
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          return (
-            <View className="relative  m-1 p-2">
-              <TouchableOpacity
-                onPress={() => setCheck("clicked card")}
-                className=""
-              >
+      {/** Loading Animation */}
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 50,
+          }}
+        >
+          <ActivityIndicator size="large" color="#6200EE" />
+          <Text>Loading data...</Text>
+        </View>
+      ) : (
+        /** Cards Section */
+        <FlatList
+          data={data}
+          numColumns={2}
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 50,
+          }}
+          keyExtractor={(item) => item.$id}
+          renderItem={({ item }) => (
+            <View className="relative m-1 p-2">
+              <TouchableOpacity onPress={() => setCheck("clicked card")}>
                 <View className="bg-gray-200 rounded-t-3xl rounded-b-3xl p-4">
-                  {" "}
                   <Image
                     source={{ uri: item.image }}
                     style={{ width: 135, height: 150 }}
@@ -167,9 +139,9 @@ export default function Index() {
                 <AntDesign name="hearto" size={24} color="black" />
               </TouchableOpacity>
             </View>
-          );
-        }}
-      />
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }
