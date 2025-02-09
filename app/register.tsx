@@ -10,15 +10,16 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
+import { signUp } from "@/lib/appwrite";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
-    console.log("Register clicked with:", { name, email, password });
-    // Add your registration logic here
+  const handleRegister = async () => {
+    const result = await signUp(email, password, name);
+    console.log("clicked register", result);
   };
 
   return (
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: "#ffffffa0",
+    backgroundColor: "#ffff",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
