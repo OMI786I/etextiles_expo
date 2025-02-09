@@ -13,6 +13,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { fetchDocuments } from "@/lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
+import { Link } from "expo-router";
 
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -60,6 +61,14 @@ export default function Index() {
   return (
     <SafeAreaView className="p-3">
       <Navbar />
+      <TouchableOpacity>
+        {" "}
+        <Link href={"/register"}>Register Now</Link>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        {" "}
+        <Link href={"/sign-in"}>Signin Now</Link>
+      </TouchableOpacity>
 
       {/** Filter section */}
       <FlatList

@@ -15,6 +15,8 @@ export default function RootLayout() {
       >
         <Drawer.Screen name="index" />
         <Drawer.Screen name="settings" />
+        <Drawer.Screen name="register" />
+        <Drawer.Screen name="sign-in" />
       </Drawer>
     </Provider>
   );
