@@ -15,7 +15,7 @@ client
   .setPlatform(config.Platform!);
 
 const database = new Databases(client);
-const account = new Account(client);
+export const account = new Account(client);
 export async function fetchDocuments(selectedType: string) {
   try {
     let result;
@@ -45,37 +45,6 @@ export async function signUp(email: string, password: string, name: string) {
   try {
     const user = await account.create(ID.unique(), email, password, name);
     return user;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function signIn(email: string, password: string) {
-  try {
-    const promise = await account.createEmailPasswordSession(email, password);
-
-    return promise;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function logout() {
-  try {
-    const result = await account.deleteSession("current");
-    return result;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-}
-
-export async function getSessionData() {
-  try {
-    const user = await account.get();
-    const session = await account.getSession("current");
-    console.log("user info", { session, user });
-    return { session, user };
   } catch (error) {
     console.error(error);
   }

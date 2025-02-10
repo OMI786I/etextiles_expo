@@ -10,7 +10,7 @@ import React, { ReactNode } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { logout } from "@/lib/appwrite";
+import { useAuth } from "@/context/AuthContext";
 
 interface MenuItem {
   title: string;
@@ -62,6 +62,8 @@ const data: MenuItem[] = [
 ];
 
 const DrawerContent = ({ navigation }: any) => {
+  const { signout } = useAuth();
+
   return (
     <ScrollView style={{ flex: 1 }}>
       <LinearGradient
@@ -108,7 +110,7 @@ const DrawerContent = ({ navigation }: any) => {
         <TouchableOpacity
           className="flex-row gap-2"
           onPress={() => {
-            logout();
+            signout();
           }}
         >
           <AntDesign name="arrowright" size={24} color="white" />,

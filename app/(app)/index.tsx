@@ -14,7 +14,7 @@ import { fetchDocuments } from "@/lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
 import { Link } from "expo-router";
-
+import { useAuth } from "@/context/AuthContext";
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("All");
   const types = ["All", "female", "male", "discount", "popular"];
@@ -57,7 +57,9 @@ export default function Index() {
   const handleTypeChange = (type) => {
     dispatch(updateTypes(type));
   };
-
+  const { user, session } = useAuth();
+  console.log("active user", user);
+  console.log("active session", session);
   return (
     <SafeAreaView className="p-3">
       <Navbar />

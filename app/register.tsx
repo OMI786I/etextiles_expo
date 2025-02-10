@@ -1,4 +1,5 @@
 import {
+  Alert,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -9,17 +10,38 @@ import {
 import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { signUp } from "@/lib/appwrite";
+import { useAuth } from "@/context/AuthContext";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { session } = useAuth();
+  if (session) {
+    return <Redirect href="/" />;
+  }
+  const router = useRouter();
   const handleRegister = async () => {
     const result = await signUp(email, password, name);
     console.log("clicked register", result);
+
+    if (result?.$id) {
+      Alert.alert(
+        "Successfully Registered",
+        "You are successfully registered",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.push("/sign-in");
+            },
+          },
+        ]
+      );
+    }
   };
 
   return (

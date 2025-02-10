@@ -1,29 +1,61 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import { Text, SafeAreaView } from "react-native";
+import { account } from "@/lib/appwrite";
 
-interface AuthContextType {
-  session: boolean;
-  user: boolean;
-}
+const AuthContext = createContext();
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+const AuthProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+  useEffect(() => {
+    init();
+  }, []);
 
-const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [session, setSession] = useState<boolean>(false);
-  const [user, setUser] = useState<boolean>(false);
+  const init = async () => {
+    checkAuth();
+  };
 
-  const contextData: AuthContextType = { session, user };
+  const checkAuth = async () => {
+    try {
+      const response = await account.get();
+      setUser(response);
+      setSession(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
 
+  const signin = async ({ email, password }) => {
+    setLoading(true);
+    try {
+      const responseSession = await account.createEmailPasswordSession(
+        email,
+        password
+      );
+      setSession(responseSession);
+      const responseUser = await account.get();
+      setUser(responseUser);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+  const signout = async () => {
+    setLoading(true);
+    await account.deleteSession("current");
+    setSession(null);
+    setLoading(false);
+  };
+
+  const contextData = { session, user, signin, signout };
   return (
     <AuthContext.Provider value={contextData}>
       {loading ? (
         <SafeAreaView>
-          <Text>Loading...</Text>
+          <Text>...Loading</Text>
         </SafeAreaView>
       ) : (
         children
@@ -33,11 +65,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 };
 
 const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return useContext(AuthContext);
 };
 
-export { useAuth, AuthProvider };
+export { useAuth, AuthContext, AuthProvider };

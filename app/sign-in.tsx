@@ -10,20 +10,21 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, Redirect } from "expo-router";
-import { signIn } from "@/lib/appwrite";
+
 import { useAuth } from "@/context/AuthContext";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { session } = useAuth();
+  const { session, signin } = useAuth();
   if (session) {
     return <Redirect href="/" />;
   }
 
   const handleSignIn = async () => {
-    const user = await signIn(email, password);
+    const response = await signin({ email, password });
+    console.log(response);
   };
 
   return (
@@ -63,7 +64,10 @@ const SignIn = () => {
               value={password}
             />
 
-            <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleSignIn()}
+            >
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
           </View>
