@@ -24,7 +24,6 @@ const SignIn = () => {
 
   const handleSignIn = async () => {
     const user = await signIn(email, password);
-    console.log(user);
   };
 
   return (

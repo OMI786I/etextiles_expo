@@ -70,11 +70,12 @@ export async function logout() {
   }
 }
 
-export async function getSession() {
+export async function getSessionData() {
   try {
-    const session = await account.get();
-
-    return session;
+    const user = await account.get();
+    const session = await account.getSession("current");
+    console.log("user info", { session, user });
+    return { session, user };
   } catch (error) {
     console.error(error);
   }
