@@ -10,7 +10,8 @@ import React, { ReactNode } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { logout } from "@/lib/appwrite";
+
 interface MenuItem {
   title: string;
   icons: ReactNode;
@@ -104,7 +105,12 @@ const DrawerContent = ({ navigation }: any) => {
           }}
         />
 
-        <TouchableOpacity className="flex-row gap-2">
+        <TouchableOpacity
+          className="flex-row gap-2"
+          onPress={() => {
+            logout();
+          }}
+        >
           <AntDesign name="arrowright" size={24} color="white" />,
           <Text className="text-white">Logout</Text>
         </TouchableOpacity>

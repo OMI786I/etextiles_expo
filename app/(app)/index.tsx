@@ -10,7 +10,7 @@ import {
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { fetchDocuments } from "@/lib/appwrite";
+import { fetchDocuments, getSession } from "@/lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
 import { Link } from "expo-router";
@@ -37,6 +37,27 @@ export default function Index() {
   const dispatch = useDispatch();
   const selectedType = useSelector((state: string) => state.types);
   console.log("user ig", selectedType);
+
+  const session = async () => {
+    const currentUser = await getSession();
+    return currentUser;
+  };
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const currentUser = await session();
+        if (currentUser) {
+          console.log("Session data:", currentUser);
+        } else {
+          console.log("No active session");
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

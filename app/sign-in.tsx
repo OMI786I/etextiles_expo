@@ -9,15 +9,22 @@ import {
 import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
+import { signIn } from "@/lib/appwrite";
+import { useAuth } from "@/context/AuthContext";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = () => {
-    console.log("Sign In clicked with:", { email, password });
-    // Add your sign-in logic here
+  const { session } = useAuth();
+  if (session) {
+    return <Redirect href="/" />;
+  }
+
+  const handleSignIn = async () => {
+    const user = await signIn(email, password);
+    console.log(user);
   };
 
   return (
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: "#ffffffa0",
+    backgroundColor: "#ffff",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",

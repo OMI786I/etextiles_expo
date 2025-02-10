@@ -49,3 +49,33 @@ export async function signUp(email: string, password: string, name: string) {
     console.error(error);
   }
 }
+
+export async function signIn(email: string, password: string) {
+  try {
+    const promise = await account.createEmailPasswordSession(email, password);
+
+    return promise;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function logout() {
+  try {
+    const result = await account.deleteSession("current");
+    return result;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export async function getSession() {
+  try {
+    const session = await account.get();
+
+    return session;
+  } catch (error) {
+    console.error(error);
+  }
+}
