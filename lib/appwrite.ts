@@ -49,3 +49,17 @@ export async function signUp(email: string, password: string, name: string) {
     console.error(error);
   }
 }
+
+export async function fetchDocumentsById(docsId: string) {
+  try {
+    const result = await database.getDocument(
+      config.databaseID, // databaseId
+      config.collectionID, // collectionId
+      docsId // documentId
+      //[]  queries (optional)
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}

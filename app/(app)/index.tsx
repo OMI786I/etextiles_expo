@@ -13,13 +13,13 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { fetchDocuments } from "@/lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 export default function Index() {
+  const router = useRouter();
+
   const [activeFilter, setActiveFilter] = useState("All");
   const types = ["All", "female", "male", "discount", "popular"];
-  const [check, setCheck] = useState("");
-  const [check2, setCheck2] = useState("");
   const [data, setData] = useState<DataItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
@@ -33,6 +33,10 @@ export default function Index() {
     seller: string;
     image: string;
   }
+
+  const handleDetails = (id: string) => {
+    router.push(`/details/${id}`);
+  };
 
   const dispatch = useDispatch();
   const selectedType = useSelector((state: string) => state.types);
@@ -71,7 +75,9 @@ export default function Index() {
         {" "}
         <Link href={"/sign-in"}>Signin Now</Link>
       </TouchableOpacity>
-
+      <TouchableOpacity>
+        <Link href="/details/3">Details page</Link>
+      </TouchableOpacity>
       {/** Filter section */}
       <FlatList
         className="mt-10"
@@ -131,7 +137,11 @@ export default function Index() {
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => (
             <View className="relative m-1 p-2">
-              <TouchableOpacity onPress={() => setCheck("clicked card")}>
+              <TouchableOpacity
+                onPress={() => {
+                  handleDetails(item.$id);
+                }}
+              >
                 <View className="bg-gray-200 rounded-t-3xl rounded-b-3xl p-4">
                   <Image
                     source={{ uri: item.image }}
@@ -150,7 +160,6 @@ export default function Index() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => setCheck2("clicked heart")}
                 style={{
                   position: "absolute",
                   top: 14,
