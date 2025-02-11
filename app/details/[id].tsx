@@ -6,14 +6,17 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
-import { fetchDocumentsById } from "@/lib/appwrite";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { fetchDocumentsById, wishlistCreateDocument } from "@/lib/appwrite";
 import { Rating } from "react-native-ratings";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useAuth } from "@/context/AuthContext";
 type DocumentType = {
-  $id: string;
+  $id?: string;
   description: string;
   image: string;
   price: number;
@@ -25,12 +28,55 @@ type DocumentType = {
 };
 
 const Details: React.FC = () => {
+  const router = useRouter();
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const [data, setData] = useState<DocumentType>();
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>("S");
+
+  const { user } = useAuth();
 
   const handleSelect = (size: string) => {
     setSelectedSize(size);
+  };
+
+  const toSendData = {
+    title: data?.title,
+    description: data?.description,
+    image: data?.image,
+    price: data?.price,
+    rating: data?.rating,
+    seller: data?.seller,
+    size: [selectedSize],
+
+    type: data?.type,
+    buyer: user.email,
+  };
+
+  const handleWishlist = async () => {
+    const response = await wishlistCreateDocument(toSendData);
+    console.log(response);
+
+    if (response) {
+      Alert.alert(
+        "Successfully added to wishlist",
+        "You have successfully added product to the wishlist",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              console.log("ok");
+            },
+          },
+          {
+            text: "Goto wishlist",
+            onPress: () => {
+              router.push("/wishlist/wishlist");
+            },
+          },
+        ]
+      );
+    }
   };
 
   useEffect(() => {
@@ -59,8 +105,6 @@ const Details: React.FC = () => {
 
     fetchData();
   }, [id]);
-
-  console.log("details data", data);
 
   if (!data) {
     return <Text>Loading</Text>;
@@ -144,6 +188,13 @@ const Details: React.FC = () => {
           <TouchableOpacity className="p-4 flex-row items-center gap-3 bg-purple-500 w-3/4 justify-center rounded-3xl mt-4">
             <Ionicons name="basket-outline" size={24} color="white" />
             <Text className="text-white">Add to Cart</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleWishlist()}
+            className="p-4 flex-row items-center gap-3 bg-purple-500 w-3/4 justify-center rounded-3xl mt-4"
+          >
+            <AntDesign name="hearto" size={24} color="white" />
+            <Text className="text-white">Add to Wishlist</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
