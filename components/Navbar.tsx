@@ -4,9 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import Octicons from "@expo/vector-icons/Octicons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useRouter } from "expo-router";
 
 const Navbar = () => {
   const navigation = useNavigation();
+  const router = useRouter();
 
   return (
     <SafeAreaView className="flex-row justify-between items-center">
@@ -15,10 +17,18 @@ const Navbar = () => {
         <TouchableOpacity>
           <Octicons name="bell" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/cart/cart");
+          }}
+        >
           <Ionicons name="basket-outline" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/wishlist/wishlist");
+          }}
+        >
           <AntDesign name="hearto" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity>

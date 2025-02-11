@@ -65,19 +65,9 @@ export default function Index() {
   console.log("active user", user);
   console.log("active session", session);
   return (
-    <SafeAreaView className="p-3">
+    <SafeAreaView className="p-3 flex-1">
       <Navbar />
-      <TouchableOpacity>
-        {" "}
-        <Link href={"/register"}>Register Now</Link>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        {" "}
-        <Link href={"/sign-in"}>Signin Now</Link>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Link href="/details/3">Details page</Link>
-      </TouchableOpacity>
+
       {/** Filter section */}
       <FlatList
         className="mt-10"

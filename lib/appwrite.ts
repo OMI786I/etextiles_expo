@@ -107,3 +107,16 @@ export async function CartCreateDocument(data: Data) {
     console.error(error);
   }
 }
+
+export async function fetchWishlist() {
+  try {
+    let result = await database.listDocuments(
+      config.databaseID,
+      config.wishlistCollectionID
+    );
+
+    return result.documents;
+  } catch (error) {
+    console.error(error);
+  }
+}

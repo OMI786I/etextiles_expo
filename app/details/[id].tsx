@@ -107,7 +107,7 @@ const Details: React.FC = () => {
           {
             text: "Goto wishlist",
             onPress: () => {
-              router.push("/wishlist/wishlist");
+              router.push("/cart/cart");
             },
           },
         ]
@@ -177,7 +177,7 @@ const Details: React.FC = () => {
   }
 
   return (
-    <SafeAreaView className="bg-gray-100">
+    <SafeAreaView className="bg-gray-100 flex-1">
       <ScrollView>
         {/**image */}
         <View className="bg-[#f5f4f1]">
