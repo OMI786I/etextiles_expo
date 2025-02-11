@@ -46,6 +46,7 @@ const Details: React.FC = () => {
   };
 
   const toSendData = {
+    productId: data?.$id,
     title: data?.title,
     description: data?.description,
     image: data?.image,

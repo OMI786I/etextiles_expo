@@ -10,8 +10,10 @@ import React, { useEffect, useState } from "react";
 import { deleteWishList, fetchWishlist } from "@/lib/appwrite";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 type DocumentType = {
   $id: string;
+  productId: string;
   description: string;
   image: string;
   price: number;
@@ -22,6 +24,7 @@ type DocumentType = {
   type: string;
 };
 const wishlist = () => {
+  const router = useRouter();
   const [data, setData] = useState<DocumentType[]>();
   const isFocused = useIsFocused();
   const handleDelete = async (id: string) => {
@@ -102,7 +105,9 @@ const wishlist = () => {
                       <Text className="text-white">Add to Cart</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      onPress={() => {}}
+                      onPress={() => {
+                        router.push(`/details/${item.productId}`);
+                      }}
                       className="p-2 bg-purple-600 rounded-2xl "
                     >
                       <Text className="text-white">Details</Text>
