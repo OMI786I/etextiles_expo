@@ -120,3 +120,16 @@ export async function fetchWishlist() {
     console.error(error);
   }
 }
+
+export async function deleteWishList(id: string) {
+  try {
+    const result = await database.deleteDocument(
+      config.databaseID, // databaseId
+      config.wishlistCollectionID, // collectionId
+      id // documentId
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
