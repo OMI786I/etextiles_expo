@@ -100,12 +100,7 @@ const cart = () => {
                     >
                       <Text className="text-white">Delete</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {}}
-                      className="p-2 bg-purple-600 rounded-2xl "
-                    >
-                      <Text className="text-white">Add to Cart</Text>
-                    </TouchableOpacity>
+
                     <TouchableOpacity
                       onPress={() => {
                         router.push(`/details/${item.productId}`);
