@@ -106,7 +106,7 @@ const Details: React.FC = () => {
             },
           },
           {
-            text: "Goto wishlist",
+            text: "Goto Cart list",
             onPress: () => {
               router.push("/cart/cart");
             },

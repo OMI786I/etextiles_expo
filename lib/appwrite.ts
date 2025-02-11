@@ -133,3 +133,29 @@ export async function deleteWishList(id: string) {
     console.error(error);
   }
 }
+
+export async function fetchCartList() {
+  try {
+    let result = await database.listDocuments(
+      config.databaseID,
+      config.cartCollectionID
+    );
+
+    return result.documents;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteCartList(id: string) {
+  try {
+    const result = await database.deleteDocument(
+      config.databaseID, // databaseId
+      config.cartCollectionID, // collectionId
+      id // documentId
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
