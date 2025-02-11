@@ -7,10 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { fetchDocumentsById, wishlistCreateDocument } from "@/lib/appwrite";
+import {
+  CartCreateDocument,
+  fetchDocumentsById,
+  wishlistCreateDocument,
+} from "@/lib/appwrite";
 import { Rating } from "react-native-ratings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -29,7 +34,7 @@ type DocumentType = {
 
 const Details: React.FC = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
   const { id } = useLocalSearchParams<{ id: string }>();
   const [data, setData] = useState<DocumentType>();
   const [selectedSize, setSelectedSize] = useState<string>("S");
@@ -54,6 +59,7 @@ const Details: React.FC = () => {
   };
 
   const handleWishlist = async () => {
+    setLoading(true);
     const response = await wishlistCreateDocument(toSendData);
     console.log(response);
 
@@ -76,6 +82,38 @@ const Details: React.FC = () => {
           },
         ]
       );
+
+      setLoading(false);
+    }
+  };
+  const handleCartlist = async () => {
+    console.log("clicked cart list");
+
+    setLoading(true);
+    const response = await CartCreateDocument(toSendData);
+    console.log(response);
+
+    if (response) {
+      Alert.alert(
+        "Successfully added to cart",
+        "You have successfully added product to the cart",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              console.log("ok");
+            },
+          },
+          {
+            text: "Goto wishlist",
+            onPress: () => {
+              router.push("/wishlist/wishlist");
+            },
+          },
+        ]
+      );
+
+      setLoading(false);
     }
   };
 
@@ -107,7 +145,35 @@ const Details: React.FC = () => {
   }, [id]);
 
   if (!data) {
-    return <Text>Loading</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 50,
+        }}
+      >
+        <ActivityIndicator size="large" color="#6200EE" />
+        <Text>Loading data...</Text>
+      </View>
+    );
+  }
+
+  if (loading === true) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 50,
+        }}
+      >
+        <ActivityIndicator size="large" color="#6200EE" />
+        <Text>Loading data...</Text>
+      </View>
+    );
   }
 
   return (
@@ -185,7 +251,10 @@ const Details: React.FC = () => {
         {/**button */}
         <View className="justify-center items-center">
           {" "}
-          <TouchableOpacity className="p-4 flex-row items-center gap-3 bg-purple-500 w-3/4 justify-center rounded-3xl mt-4">
+          <TouchableOpacity
+            className="p-4 flex-row items-center gap-3 bg-purple-500 w-3/4 justify-center rounded-3xl mt-4"
+            onPress={() => handleCartlist()}
+          >
             <Ionicons name="basket-outline" size={24} color="white" />
             <Text className="text-white">Add to Cart</Text>
           </TouchableOpacity>

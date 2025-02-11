@@ -19,6 +19,7 @@ const config = {
   databaseID: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
   collectionID: process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID,
   wishlistCollectionID: process.env.EXPO_PUBLIC_APPWRITE_WISHCOLLECTION_ID,
+  cartCollectionID: process.env.EXPO_PUBLIC_APPWRITE_CARTCOLLECTION_ID,
 };
 
 const client = new Client();
@@ -82,6 +83,21 @@ export async function wishlistCreateDocument(data: Data) {
     const result = await database.createDocument(
       config.databaseID, // databaseId
       config.wishlistCollectionID, // collectionId
+      ID.unique(), // documentId
+      data // data
+    );
+
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function CartCreateDocument(data: Data) {
+  try {
+    const result = await database.createDocument(
+      config.databaseID, // databaseId
+      config.cartCollectionID, // collectionId
       ID.unique(), // documentId
       data // data
     );

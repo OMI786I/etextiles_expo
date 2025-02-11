@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { Text, SafeAreaView } from "react-native";
+import { View, Text, SafeAreaView, ActivityIndicator } from "react-native";
 import { account } from "@/lib/appwrite";
 
 const AuthContext = createContext();
@@ -55,7 +55,17 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={contextData}>
       {loading ? (
         <SafeAreaView>
-          <Text>...Loading</Text>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 50,
+            }}
+          >
+            <ActivityIndicator size="large" color="#6200EE" />
+            <Text>Loading data...</Text>
+          </View>
         </SafeAreaView>
       ) : (
         children
