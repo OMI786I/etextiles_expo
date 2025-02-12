@@ -11,6 +11,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "expo-router";
 
 interface MenuItem {
   title: string;
@@ -20,19 +21,19 @@ interface MenuItem {
 
 const data: MenuItem[] = [
   {
-    title: "Orders",
+    title: "Carts",
     icons: <Ionicons name="basket-outline" size={28} color="white" />,
-    link: "/",
+    link: "/cart/cart",
   },
   {
     title: "Wishlist",
     icons: <AntDesign name="hearto" size={28} color="white" />,
-    link: "/",
+    link: "/wishlist/wishlist",
   },
   {
     title: "Delivery Address",
     icons: <Ionicons name="map" size={28} color="white" />,
-    link: "/",
+    link: "/edit/edit",
   },
   {
     title: "Payment Method",
@@ -42,7 +43,7 @@ const data: MenuItem[] = [
   {
     title: "Promo",
     icons: <AntDesign name="carryout" size={24} color="white" />,
-    link: "/",
+    link: "/promo/promo",
   },
   {
     title: "Notifications",
@@ -63,7 +64,7 @@ const data: MenuItem[] = [
 
 const DrawerContent = ({ navigation }: any) => {
   const { signout, user } = useAuth();
-
+  const router = useRouter();
   return (
     <ScrollView style={{ flex: 1 }}>
       <LinearGradient
@@ -79,12 +80,12 @@ const DrawerContent = ({ navigation }: any) => {
 
           <View>
             <View className="flex-row items-center gap-1">
-              <Text className="text-xl font-bold text-white">{user.name}</Text>
+              <Text className="text-xl font-bold text-white">{user?.name}</Text>
               <TouchableOpacity>
                 <AntDesign name="edit" size={20} color="white" />
               </TouchableOpacity>
             </View>
-            <Text className="text-gray-200">{user.email}</Text>
+            <Text className="text-gray-200">{user?.email}</Text>
           </View>
         </View>
 
@@ -95,7 +96,10 @@ const DrawerContent = ({ navigation }: any) => {
           renderItem={({ item }) => {
             return (
               <View className=" my-2 ">
-                <TouchableOpacity className="flex-row gap-2">
+                <TouchableOpacity
+                  onPress={() => router.push(item.link)}
+                  className="flex-row gap-2"
+                >
                   {item.icons}
 
                   <Text className="text-white"> {item.title}</Text>

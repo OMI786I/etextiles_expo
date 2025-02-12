@@ -19,6 +19,8 @@ export default function RootLayout() {
           <Drawer.Screen name="settings" />
           <Drawer.Screen name="register" />
           <Drawer.Screen name="sign-in" />
+          <Drawer.Screen name="wishlist" />
+          <Drawer.Screen name="cart" />
         </Drawer>
       </Provider>
     </AuthProvider>

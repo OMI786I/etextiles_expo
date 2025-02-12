@@ -20,6 +20,7 @@ const config = {
   collectionID: process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID,
   wishlistCollectionID: process.env.EXPO_PUBLIC_APPWRITE_WISHCOLLECTION_ID,
   cartCollectionID: process.env.EXPO_PUBLIC_APPWRITE_CARTCOLLECTION_ID,
+  userCollectionID: process.env.EXPO_PUBLIC_APPWRITE_USERCOLLECTION_ID,
 };
 
 const client = new Client();
@@ -157,6 +158,34 @@ export async function deleteCartList(id: string) {
       id // documentId
     );
     return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function createUserDocument(data: Data) {
+  try {
+    const result = await database.createDocument(
+      config.databaseID, // databaseId
+      config.userCollectionID, // collectionId
+      ID.unique(), // documentId
+      data // data
+    );
+
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function fetchUser(user: string) {
+  try {
+    let result = await database.listDocuments(
+      config.databaseID,
+      config.userCollectionID,
+      [Query.equal("email", [user])]
+    );
+
+    return result.documents;
   } catch (error) {
     console.error(error);
   }

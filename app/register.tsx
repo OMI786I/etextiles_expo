@@ -11,13 +11,23 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, Redirect, useRouter } from "expo-router";
-import { signUp } from "@/lib/appwrite";
+import { createUserDocument, signUp } from "@/lib/appwrite";
 import { useAuth } from "@/context/AuthContext";
+
+type User = {
+  email: string;
+  name: string;
+};
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const user: User = {
+    name: name,
+    email: email,
+  };
 
   const { session } = useAuth();
   if (session) {
@@ -27,7 +37,8 @@ const Register = () => {
   const handleRegister = async () => {
     const result = await signUp(email, password, name);
     console.log("clicked register", result);
-
+    const databaseUser = await createUserDocument(user);
+    console.log("database user to send", databaseUser);
     if (result?.$id) {
       Alert.alert(
         "Successfully Registered",
