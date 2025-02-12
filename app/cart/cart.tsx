@@ -65,6 +65,7 @@ const Cart = () => {
     }
   }, [data]);
 
+  console.log(discountedPrice, isPromoApplied);
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === "damkoman" && !isPromoApplied) {
       setDiscountedPrice(totalPrice / 2);
