@@ -7,12 +7,11 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { editUser, fetchUser } from "@/lib/appwrite";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "expo-router";
 
-const userEdit = () => {
+const UserEdit = () => {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -21,49 +20,74 @@ const userEdit = () => {
   const [address, setAddress] = useState("");
   const [image, setImage] = useState("https://i.ibb.co/nqpJrWtt/avatar.jpg");
 
-  const [data, setData] = useState();
-
-  const toSendData = {
-    name: name,
-    address: address,
-    image: image,
-    phone: phone,
-  };
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const userDetails = async () => {
-      const result = await fetchUser(user?.email);
-      setData(result[0]);
+      try {
+        const result = await fetchUser(user?.email);
+        console.log("Fetched user data:", result); // Debugging
+        setData(result[0]); // Assuming `result` is an array
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        setIsLoading(false);
+      }
     };
     userDetails();
   }, []);
-  console.log("data in edit page", data);
 
   const handleEditUser = async (id: string) => {
-    const response = await editUser(
-      id,
-      toSendData.name,
-      toSendData.address,
-      toSendData.image,
-      toSendData.phone
-    );
-    console.log(id, name, phone, address, image);
-    console.log("edited", response);
-    if (response) {
-      Alert.alert(
-        "Successfully Registered",
-        "You are successfully registered",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              router.push("/");
-            },
-          },
-        ]
+    if (!id) {
+      Alert.alert("Error", "User data is not loaded yet. Please try again.");
+      return;
+    }
+
+    try {
+      const response = await editUser(
+        id,
+        name,
+        address,
+        image,
+        parseInt(phone)
       );
+      console.log("Edited:", response);
+      if (response) {
+        Alert.alert(
+          "Successfully Updated",
+          "Your profile has been updated successfully.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                router.push("/");
+              },
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      Alert.alert("Error", "Failed to update user. Please try again.");
     }
   };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-gray-100 items-center justify-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!data) {
+    return (
+      <View className="flex-1 bg-gray-100 items-center justify-center">
+        <Text>Failed to load user data. Please try again later.</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-gray-100 items-center justify-center p-4">
@@ -85,7 +109,7 @@ const userEdit = () => {
           value={phone}
           onChangeText={setPhone}
           placeholder="Enter Phone"
-          keyboardType="phone-pad"
+          keyboardType="numeric"
         />
 
         <TextInput
@@ -94,6 +118,7 @@ const userEdit = () => {
           onChangeText={setAddress}
           placeholder="Enter Address"
         />
+
         <TextInput
           className="mt-4 w-full border-b border-gray-300 p-2 text-center"
           onChangeText={setImage}
@@ -103,12 +128,15 @@ const userEdit = () => {
         <TouchableOpacity
           className="mt-6 bg-blue-500 px-6 py-2 rounded-lg"
           onPress={() => handleEditUser(data?.$id)}
+          disabled={isLoading || !data?.$id}
         >
-          <Text className="text-white font-semibold">Save Changes</Text>
+          <Text className="text-white font-semibold">
+            {isLoading ? "Loading..." : "Save Changes"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default userEdit;
+export default UserEdit;

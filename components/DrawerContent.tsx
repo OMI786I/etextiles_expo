@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
+import useUser from "@/customHook/User";
 
 interface MenuItem {
   title: string;
@@ -63,6 +64,8 @@ const data: MenuItem[] = [
 ];
 
 const DrawerContent = ({ navigation }: any) => {
+  const { data: userData, loading } = useUser();
+
   const { signout, user } = useAuth();
   const router = useRouter();
   return (
@@ -80,7 +83,9 @@ const DrawerContent = ({ navigation }: any) => {
 
           <View>
             <View className="flex-row items-center gap-1">
-              <Text className="text-xl font-bold text-white">{user?.name}</Text>
+              <Text className="text-xl font-bold text-white">
+                {userData?.name}
+              </Text>
               <TouchableOpacity
                 onPress={() => {
                   router.push("/userdetails/userdetails");

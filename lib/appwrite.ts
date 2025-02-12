@@ -196,7 +196,7 @@ export async function editUser(
   name: string,
   address: string,
   image: string,
-  phone: string
+  phone: number
 ) {
   try {
     const result = await database.updateDocument(
@@ -213,6 +213,6 @@ export async function editUser(
     );
     return result;
   } catch (error) {
-    console.error;
+    console.error(error);
   }
 }
