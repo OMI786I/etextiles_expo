@@ -94,7 +94,7 @@ const wishlist = () => {
   useEffect(() => {
     const wishlistfetch = async () => {
       try {
-        const result = await fetchWishlist();
+        const result = await fetchWishlist(user.email);
         console.log("Fetched wishlist data:", result);
         setData(result);
       } catch (error) {

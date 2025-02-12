@@ -62,7 +62,7 @@ const data: MenuItem[] = [
 ];
 
 const DrawerContent = ({ navigation }: any) => {
-  const { signout } = useAuth();
+  const { signout, user } = useAuth();
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -79,14 +79,12 @@ const DrawerContent = ({ navigation }: any) => {
 
           <View>
             <View className="flex-row items-center gap-1">
-              <Text className="text-xl font-bold text-white">
-                Tahid Sohrawardy Omi
-              </Text>
+              <Text className="text-xl font-bold text-white">{user.name}</Text>
               <TouchableOpacity>
                 <AntDesign name="edit" size={20} color="white" />
               </TouchableOpacity>
             </View>
-            <Text className="text-gray-200">sohrawardy1998@gmail.com</Text>
+            <Text className="text-gray-200">{user.email}</Text>
           </View>
         </View>
 

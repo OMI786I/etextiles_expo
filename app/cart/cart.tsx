@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/context/AuthContext";
 
 type DocumentType = {
   $id: string;
@@ -28,6 +29,7 @@ type DocumentType = {
 const cart = () => {
   const router = useRouter();
   const isFocused = useIsFocused();
+  const { user } = useAuth();
   const [data, setData] = useState<DocumentType[]>();
   const handleDelete = async (id: string) => {
     const response = await deleteCartList(id);
@@ -37,7 +39,7 @@ const cart = () => {
   useEffect(() => {
     const cartListFetch = async () => {
       try {
-        const result = await fetchCartList();
+        const result = await fetchCartList(user.email);
         console.log("Fetched wishlist data:", result);
         setData(result);
       } catch (error) {

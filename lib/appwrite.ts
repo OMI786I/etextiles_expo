@@ -108,11 +108,12 @@ export async function CartCreateDocument(data: Data) {
   }
 }
 
-export async function fetchWishlist() {
+export async function fetchWishlist(user: string) {
   try {
     let result = await database.listDocuments(
       config.databaseID,
-      config.wishlistCollectionID
+      config.wishlistCollectionID,
+      [Query.equal("buyer", [user])]
     );
 
     return result.documents;
@@ -134,11 +135,12 @@ export async function deleteWishList(id: string) {
   }
 }
 
-export async function fetchCartList() {
+export async function fetchCartList(user: string) {
   try {
     let result = await database.listDocuments(
       config.databaseID,
-      config.cartCollectionID
+      config.cartCollectionID,
+      [Query.equal("buyer", [user])]
     );
 
     return result.documents;
