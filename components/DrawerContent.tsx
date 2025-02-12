@@ -33,7 +33,7 @@ const data: MenuItem[] = [
   {
     title: "Delivery Address",
     icons: <Ionicons name="map" size={28} color="white" />,
-    link: "/edit/edit",
+    link: "/userdetails/userdetails",
   },
   {
     title: "Payment Method",
@@ -81,7 +81,11 @@ const DrawerContent = ({ navigation }: any) => {
           <View>
             <View className="flex-row items-center gap-1">
               <Text className="text-xl font-bold text-white">{user?.name}</Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/userdetails/userdetails");
+                }}
+              >
                 <AntDesign name="edit" size={20} color="white" />
               </TouchableOpacity>
             </View>

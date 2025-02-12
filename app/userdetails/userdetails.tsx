@@ -8,13 +8,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { fetchUser } from "@/lib/appwrite";
-import { useNavigation } from "expo-router";
+import { useRouter } from "expo-router";
 
 const edit = () => {
-  const navigation = useNavigation();
   const { user } = useAuth();
   const [data, setData] = useState();
-
+  const router = useRouter();
   useEffect(() => {
     const userDetails = async () => {
       const result = await fetchUser(user?.email);
@@ -55,7 +54,9 @@ const edit = () => {
 
         <TouchableOpacity
           className="mt-6 bg-blue-500 px-6 py-2 rounded-lg"
-          onPress={() => navigation.navigate("EditProfile")}
+          onPress={() => {
+            router.push("/userEdit/userEdit");
+          }}
         >
           <Text className="text-white font-semibold">Edit Profile</Text>
         </TouchableOpacity>

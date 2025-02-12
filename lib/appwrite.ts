@@ -190,3 +190,29 @@ export async function fetchUser(user: string) {
     console.error(error);
   }
 }
+
+export async function editUser(
+  documentId: string,
+  name: string,
+  address: string,
+  image: string,
+  phone: string
+) {
+  try {
+    const result = await database.updateDocument(
+      config.databaseID, // databaseId
+      config.userCollectionID, // collectionId
+      documentId, // documentId
+
+      {
+        name: name,
+        address: address,
+        image: image,
+        phone: phone,
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error;
+  }
+}
