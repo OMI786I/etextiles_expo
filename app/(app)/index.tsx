@@ -85,7 +85,6 @@ export default function Index() {
     <SafeAreaView className="flex-1">
       <Navbar />
 
-      {/* Wrap filters and search in a ScrollView */}
       <ScrollView>
         {/* Filter section */}
         <FlatList
@@ -161,7 +160,7 @@ export default function Index() {
         />
       </ScrollView>
 
-      {/* FlatList should be separate with flex-1 to allow scrolling */}
+      {/* FlatList */}
       {loading ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

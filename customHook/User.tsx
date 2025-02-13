@@ -20,7 +20,7 @@ const useUser = () => {
       try {
         const result = await fetchUser(user?.email);
         console.log("Fetched user data:", result); // Debugging
-        setData(result[0]); // Assuming `result` is an array
+        setData(result[0]); //
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -30,7 +30,7 @@ const useUser = () => {
     };
 
     userDetails();
-  }, [user?.email]); // Re-run effect when the user's email changes
+  }, [user?.email]);
 
   return { data, loading, error };
 };
