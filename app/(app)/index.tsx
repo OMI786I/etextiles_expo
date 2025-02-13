@@ -7,6 +7,7 @@ import {
   View,
   ActivityIndicator,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { fetchDocuments } from "@/lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
+import { ScrollView } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { Picker } from "@react-native-picker/picker";
@@ -23,8 +25,8 @@ export default function Index() {
   const [activeFilter, setActiveFilter] = useState("All");
   const types = ["All", "female", "male", "discount", "popular"];
   const [data, setData] = useState<DataItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState("");
   interface DataItem {
     $id: string;
     title: string;
@@ -56,123 +58,134 @@ export default function Index() {
 
   useEffect(() => {
     const applyFilter = async () => {
-      if (selectedValue !== "") {
-        console.log("Fetching documents for filter:", selectedValue);
-        setLoading(true); // Start loading
-
-        try {
-          const response = await fetchDocuments(selectedType, selectedValue);
-          setData(response);
-          console.log("Fetched Documents:", response);
-        } catch (error) {
-          console.error("Error fetching documents:", error);
-        } finally {
-          setLoading(false); // Stop loading after fetching data
-        }
+      setLoading(true);
+      try {
+        const response = await fetchDocuments(
+          selectedType,
+          selectedValue,
+          searchQuery
+        );
+        setData(response);
+        console.log("Fetched Documents:", response);
+      } catch (error) {
+        console.error("Error fetching documents:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     applyFilter();
-  }, [selectedValue, selectedType]);
-
+  }, [selectedValue, selectedType, searchQuery]);
   const options = [
     { label: "Ascending", value: "asc" },
     { label: "Descending", value: "dsc" },
   ];
 
   return (
-    <SafeAreaView className="p-3 flex-1">
+    <SafeAreaView className="flex-1">
       <Navbar />
 
-      {/** Filter section */}
-      <FlatList
-        className="mt-10"
-        contentContainerStyle={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        data={types}
-        horizontal
-        renderItem={({ item }) => (
-          <View style={{ marginHorizontal: 8 }}>
-            <TouchableOpacity
-              activeOpacity={0.4}
-              className={
-                item !== activeFilter
-                  ? `px-5 py-2 rounded-full border-purple-600 border-2`
-                  : `px-5 py-2 rounded-full bg-purple-600`
-              }
-              onPress={() => (setActiveFilter(item), handleTypeChange(item))}
-            >
-              <Text
-                className={item !== activeFilter ? `text-black` : `text-white`}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        keyExtractor={(item) => item}
-        showsHorizontalScrollIndicator={false}
-      />
-      {/**filter */}
-      <View style={styles.container}>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedValue}
-            onValueChange={(itemValue) => {
-              console.log("Selected filter:", itemValue);
-              setSelectedValue(itemValue);
-            }}
-            style={styles.picker}
-          >
-            <Picker.Item label="Choose an option..." value="" />
-            {options.map((item, index) => (
-              <Picker.Item key={index} label={item.label} value={item.value} />
-            ))}
-          </Picker>
-        </View>
-      </View>
-
-      {/** Loading Animation */}
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
+      {/* Wrap filters and search in a ScrollView */}
+      <ScrollView>
+        {/* Filter section */}
+        <FlatList
+          className="mt-10"
+          contentContainerStyle={{
+            flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 50,
           }}
+          data={types}
+          horizontal
+          renderItem={({ item }) => (
+            <View style={{ marginHorizontal: 8 }}>
+              <TouchableOpacity
+                activeOpacity={0.4}
+                className={
+                  item !== activeFilter
+                    ? `px-5 py-2 rounded-full border-purple-600 border-2`
+                    : `px-5 py-2 rounded-full bg-purple-600`
+                }
+                onPress={() => (setActiveFilter(item), handleTypeChange(item))}
+              >
+                <Text
+                  className={
+                    item !== activeFilter ? `text-black` : `text-white`
+                  }
+                >
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item) => item}
+          showsHorizontalScrollIndicator={false}
+        />
+
+        {/* Sorting Picker */}
+        <View style={styles.container}>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedValue}
+              onValueChange={(itemValue) => {
+                console.log("Selected filter:", itemValue);
+                setSelectedValue(itemValue);
+              }}
+              style={styles.picker}
+            >
+              <Picker.Item label="Choose an option..." value="" />
+              {options.map((item, index) => (
+                <Picker.Item
+                  key={index}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+            </Picker>
+          </View>
+        </View>
+
+        {/* Search Input */}
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            margin: 10,
+            paddingHorizontal: 10,
+            borderRadius: 8,
+          }}
+          placeholder="Search by title..."
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
+        />
+      </ScrollView>
+
+      {/* FlatList should be separate with flex-1 to allow scrolling */}
+      {loading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ActivityIndicator size="large" color="#6200EE" />
           <Text>Loading data...</Text>
         </View>
       ) : (
-        /** Cards Section */
         <FlatList
           data={data}
           numColumns={2}
           contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 50,
+            paddingBottom: 10,
           }}
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => (
             <View className="relative m-1 p-2">
-              <TouchableOpacity
-                onPress={() => {
-                  handleDetails(item.$id);
-                }}
-              >
+              <TouchableOpacity onPress={() => handleDetails(item.$id)}>
                 <View className="bg-gray-200 rounded-t-3xl rounded-b-3xl p-4">
                   <Image
                     source={{ uri: item.image }}
                     style={{ width: 135, height: 150 }}
                   />
                 </View>
-
                 <View className="mt-5">
                   <Text className="font-bold text-xl text-center">
                     {item.title}
@@ -182,13 +195,8 @@ export default function Index() {
                   </Text>
                 </View>
               </TouchableOpacity>
-
               <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  top: 14,
-                  right: 18,
-                }}
+                style={{ position: "absolute", top: 14, right: 18 }}
               >
                 <AntDesign name="hearto" size={24} color="black" />
               </TouchableOpacity>

@@ -31,36 +31,47 @@ client
 
 const database = new Databases(client);
 export const account = new Account(client);
-export async function fetchDocuments(selectedType?: string, filter?: string) {
+export async function fetchDocuments(
+  selectedType: string,
+  filter: string,
+  searchQuery = ""
+) {
   try {
-    let result;
     let queryFilters = [];
-    console.log("on api ", selectedType, filter);
-    // Determine sorting order
+
+    // Apply type filter if not "All"
+    if (selectedType !== "All" && selectedType !== "") {
+      queryFilters.push(Query.equal("type", [selectedType]));
+    }
+
+    // Apply sorting based on filter
     if (filter === "asc") {
       queryFilters.push(Query.orderAsc("price"));
     } else if (filter === "dsc") {
       queryFilters.push(Query.orderDesc("price"));
     }
 
-    // Apply type filter if selectedType is not "All"
-    if (selectedType !== "All") {
-      queryFilters.push(Query.equal("type", [selectedType]));
+    // Apply search query if provided
+    if (searchQuery.trim() !== "") {
+      queryFilters.push(Query.search("title", searchQuery));
     }
 
+    console.log("Fetching documents with filters:", queryFilters);
+
     // Fetch documents with applied filters
-    result = await database.listDocuments(
+    const result = await database.listDocuments(
       config.databaseID,
       config.collectionID,
       queryFilters
     );
 
+    console.log("Fetched Documents:", result.documents);
     return result.documents;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching documents:", error);
+    return [];
   }
 }
-
 export async function signUp(email: string, password: string, name: string) {
   try {
     const user = await account.create(ID.unique(), email, password, name);
