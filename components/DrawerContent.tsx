@@ -75,11 +75,19 @@ const DrawerContent = ({ navigation }: any) => {
         style={{ flex: 1, minHeight: "100%", padding: 30 }}
       >
         {/* User Profile Section */}
+
         <View className="flex-row items-center mb-6">
-          <Image
-            className="h-16 w-16 rounded-full mr-4"
-            source={{ uri: "https://i.ibb.co/nqpJrWtt/avatar.jpg" }}
-          />
+          {userData?.image ? (
+            <Image
+              className="h-16 w-16 rounded-full mr-4"
+              source={{ uri: `${userData?.image}` }}
+            />
+          ) : (
+            <Image
+              className="h-16 w-16 rounded-full mr-4"
+              source={{ uri: `https://i.ibb.co/nqpJrWtt/avatar.jpg` }}
+            />
+          )}
 
           <View>
             <View className="flex-row items-center gap-1">

@@ -31,24 +31,29 @@ client
 
 const database = new Databases(client);
 export const account = new Account(client);
-export async function fetchDocuments(selectedType: string) {
+export async function fetchDocuments(selectedType?: string, filter?: string) {
   try {
     let result;
-
-    // If selectedType is "All", don't apply any filter
-    if (selectedType === "All") {
-      result = await database.listDocuments(
-        config.databaseID,
-        config.collectionID
-      );
-    } else {
-      // Apply filter if selectedType is not "All"
-      result = await database.listDocuments(
-        config.databaseID, // databaseId
-        config.collectionID, // collectionId
-        [Query.equal("type", [selectedType])]
-      );
+    let queryFilters = [];
+    console.log("on api ", selectedType, filter);
+    // Determine sorting order
+    if (filter === "asc") {
+      queryFilters.push(Query.orderAsc("price"));
+    } else if (filter === "dsc") {
+      queryFilters.push(Query.orderDesc("price"));
     }
+
+    // Apply type filter if selectedType is not "All"
+    if (selectedType !== "All") {
+      queryFilters.push(Query.equal("type", [selectedType]));
+    }
+
+    // Fetch documents with applied filters
+    result = await database.listDocuments(
+      config.databaseID,
+      config.collectionID,
+      queryFilters
+    );
 
     return result.documents;
   } catch (error) {

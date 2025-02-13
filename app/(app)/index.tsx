@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateTypes } from "@/stateSlice/typeSlice";
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
+import { Picker } from "@react-native-picker/picker";
 export default function Index() {
   const router = useRouter();
 
@@ -42,28 +44,42 @@ export default function Index() {
   const selectedType = useSelector((state: string) => state.types);
   console.log("user ig", selectedType);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Start loading
-      try {
-        const result = await fetchDocuments(selectedType);
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
-
-    fetchData();
-  }, [selectedType]);
-
   const handleTypeChange = (type) => {
     dispatch(updateTypes(type));
   };
+
   const { user, session } = useAuth();
   console.log("active user", user);
   console.log("active session", session);
+
+  const [selectedValue, setSelectedValue] = useState<string>("asc");
+
+  useEffect(() => {
+    const applyFilter = async () => {
+      if (selectedValue !== "") {
+        console.log("Fetching documents for filter:", selectedValue);
+        setLoading(true); // Start loading
+
+        try {
+          const response = await fetchDocuments(selectedType, selectedValue);
+          setData(response);
+          console.log("Fetched Documents:", response);
+        } catch (error) {
+          console.error("Error fetching documents:", error);
+        } finally {
+          setLoading(false); // Stop loading after fetching data
+        }
+      }
+    };
+
+    applyFilter();
+  }, [selectedValue, selectedType]);
+
+  const options = [
+    { label: "Ascending", value: "asc" },
+    { label: "Descending", value: "dsc" },
+  ];
+
   return (
     <SafeAreaView className="p-3 flex-1">
       <Navbar />
@@ -100,6 +116,24 @@ export default function Index() {
         keyExtractor={(item) => item}
         showsHorizontalScrollIndicator={false}
       />
+      {/**filter */}
+      <View style={styles.container}>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedValue}
+            onValueChange={(itemValue) => {
+              console.log("Selected filter:", itemValue);
+              setSelectedValue(itemValue);
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="Choose an option..." value="" />
+            {options.map((item, index) => (
+              <Picker.Item key={index} label={item.label} value={item.value} />
+            ))}
+          </Picker>
+        </View>
+      </View>
 
       {/** Loading Animation */}
       {loading ? (
@@ -165,3 +199,27 @@ export default function Index() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    overflow: "hidden",
+    width: 250,
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+  },
+  selectedText: {
+    marginTop: 20,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
